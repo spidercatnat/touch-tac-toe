@@ -32,10 +32,10 @@ class Box {
 
 class TicTacToeApp {
     constructor(size = 3) {
-        this.gameOver = false;
         this.players = [{ name: 'red', color: 'red' }, { name: 'blue', color: 'blue' }];
         this.turn = 0;
-        this.moves = size * size;
+        this.gameOver = false;
+        this.movesLeft = size * size;
         this.boxes = [];
         this.touches = [];
         this.size = size;
@@ -85,7 +85,7 @@ class TicTacToeApp {
     /* Methods for determining a winner */
     hasWinner(box) {
         // Tie?
-        if (this.moves === 0) {
+        if (this.movesLeft === 0) {
             this.endGame({ name: 'Nobody', color: 'black' });
             return;
         }
@@ -102,7 +102,7 @@ class TicTacToeApp {
         this.ctx.translate(0, 0);
         this.ctx.fillText(`${player.name} wins! \n Touch to start a new game.`, (this.canvas.width / 2) / 2, this.canvas.height / 2);
         this.gameOver = true;
-        this.moves = this.size * this.size;
+        this.movesLeft = this.size * this.size;
     }
     checkRows(index) {
         let currentName = this.boxes[index].occupied.name;
@@ -131,7 +131,7 @@ class TicTacToeApp {
             if (!this.boxes[otherBox]) return false;
             if (this.boxes[otherBox].occupied.name !== currentName) return false;
         }
-        console.log(`Winning diagonal: ${currentName}`)
+        return true;
     }
     checkUpwardDiagonal(index) {
         let currentName = this.boxes[index].occupied.name;
@@ -210,7 +210,7 @@ class TicTacToeApp {
                         console.log(`Box is already occupied by ${boxes[box].occupied.name}`)
                     } else {
                         boxes[box].mark(players[turn]);
-                        this.moves--;
+                        this.movesLeft--;
                         this.hasWinner(box);
                     }
                 }
