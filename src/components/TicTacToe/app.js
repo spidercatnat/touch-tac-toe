@@ -41,14 +41,13 @@ class TicTacToeApp {
         this.size = size;
         this.getTouchCoord = this.getTouchCoord.bind(this);
     }
-    /* Initialize and handle responsive sizing */
+    /* Initialize */
     init(ctx, canvas, width, height) {
         this.ctx = ctx;
         this.canvas = canvas;
         this.width = width;
         this.height = height;
         this.activateListeners();
-        this.makeBoard();
         this.drawBoard();
     }
     setSize(width, height) {
@@ -91,7 +90,7 @@ class TicTacToeApp {
             return;
         }
         // Winner?
-        if (this.checkRows(box) || this.checkColumn(box) || this.checkDownwardDiaganal(box) || this.checkUpwardDiaganal(box)) {
+        if (this.checkRows(box) || this.checkColumn(box) || this.checkDownwardDiagonal(box) || this.checkUpwardDiagonal(box)) {
             this.endGame(this.players[this.turn % 2]); // Announce the winner
         } else {
             this.turn = (this.turn + 1) % 2; // Next player's turn
@@ -125,16 +124,16 @@ class TicTacToeApp {
         }
         return true;
     }
-    checkDownwardDiaganal(index) {
+    checkDownwardDiagonal(index) {
         let currentName = this.boxes[index].occupied.name;
         for (let col = 0; col < this.size; col++) {
             let otherBox = (col * this.size) + col;
             if (!this.boxes[otherBox]) return false;
             if (this.boxes[otherBox].occupied.name !== currentName) return false;
         }
-        console.log(`Winning diaganal: ${currentName}`)
+        console.log(`Winning diagonal: ${currentName}`)
     }
-    checkUpwardDiaganal(index) {
+    checkUpwardDiagonal(index) {
         let currentName = this.boxes[index].occupied.name;
         for (let col = 0; col < this.size; col++) {
             let otherBox = (this.size - 1 - col) * this.size + col;
