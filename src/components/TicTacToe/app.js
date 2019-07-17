@@ -85,14 +85,17 @@ class TicTacToeApp {
     }
     /* Methods for determining a winner */
     hasWinner(box) {
-        if (this.checkRows(box) || this.checkColumn(box) || this.checkDownwardDiaganal(box) || this.checkUpwardDiaganal(box)) {
-            return true;
-        } else if (this.moves === 0) {
+        // Tie?
+        if (this.moves === 0) {
             this.endGame({ name: 'Nobody', color: 'black' });
+            return;
         }
-        this.turn = (this.turn + 1) % 2;
-
-
+        // Winner?
+        if (this.checkRows(box) || this.checkColumn(box) || this.checkDownwardDiaganal(box) || this.checkUpwardDiaganal(box)) {
+            this.endGame(this.players[this.turn % 2]); // Announce the winner
+        } else {
+            this.turn = (this.turn + 1) % 2; // Next player's turn
+        }
     }
     endGame(player) {
         this.ctx.fillStyle = player.color;
@@ -100,6 +103,7 @@ class TicTacToeApp {
         this.ctx.translate(0, 0);
         this.ctx.fillText(`${player.name} wins! \n Touch to start a new game.`, (this.canvas.width / 2) / 2, this.canvas.height / 2);
         this.gameOver = true;
+        this.moves = this.size * this.size;
     }
     checkRows(index) {
         let currentName = this.boxes[index].occupied.name;
@@ -109,7 +113,6 @@ class TicTacToeApp {
             if (!this.boxes[otherBox]) return false;
             if (this.boxes[otherBox].occupied.name !== currentName) return false;
         }
-        this.endGame(this.players[this.turn % 2]);
         return true;
     }
     checkColumn(index) {
@@ -120,7 +123,6 @@ class TicTacToeApp {
             if (!this.boxes[otherBox]) return false;
             if (this.boxes[otherBox].occupied.name !== currentName) return false;
         }
-        this.endGame(this.players[this.turn % 2]);
         return true;
     }
     checkDownwardDiaganal(index) {
@@ -131,7 +133,6 @@ class TicTacToeApp {
             if (this.boxes[otherBox].occupied.name !== currentName) return false;
         }
         console.log(`Winning diaganal: ${currentName}`)
-        this.endGame(this.players[this.turn % 2]);
     }
     checkUpwardDiaganal(index) {
         let currentName = this.boxes[index].occupied.name;
@@ -141,7 +142,6 @@ class TicTacToeApp {
             if (!this.boxes[otherBox]) return false;
             if (this.boxes[otherBox].occupied.name !== currentName) return false;
         }
-        this.endGame(this.players[this.turn % 2]);
         return true;
     }
     /* Interactivity methods */
@@ -210,8 +210,8 @@ class TicTacToeApp {
                     if (boxes[box].occupied) {
                         console.log(`Box is already occupied by ${boxes[box].occupied.name}`)
                     } else {
-                        this.moves--;
                         boxes[box].mark(players[turn]);
+                        this.moves--;
                         this.hasWinner(box);
                     }
                 }
